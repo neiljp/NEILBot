@@ -76,12 +76,14 @@ function on_receive(c, text)
       end
     end
   elseif text:find("JOIN ") then
-    local user,name,ip,chan= text:match(":([%w_]+)!~([%w_]+)@(%S-)%sJOIN%s([%S]+)")
-    print("IRC: Nick "..user.."("..name..") joining channel "..chan)
+    local user,name,ip,chan=text:match(":([%w_]+)!~([%w_]+)@(%S-)%sJOIN%s([%S]+)")
+    print("IRC: "..user.."("..name..") joined channel "..chan)
   elseif text:find("QUIT") then
-    print("QUIT")
+    local user,name,ip,reason=text:match(":([%w_]+)!~([%w_]+)@(%S-)%sQUIT%s([%S]+)")
+    print("IRC: "..user.."("..name..") quit due to "..reason)
   elseif text:find("PART") then
-    print("PART")
+    local user,name,ip,chan,reason=text:match(":([%w_]+)!~([%w_]+)@(%S-)%sPART%s([%S]+)%s([%S]+)")
+    print("IRC: "..user.."("..name..") left "..chan.." due to "..reason)
   elseif text:find("NICK") then
     local user,name,ip,newuser = text:match(":([%w_]+)!~([%w_]+)@(%S-)%sNICK%s:([%S]+)")
     print("IRC: "..name.." changed nick from '"..user.."' to '"..newuser.."'")
