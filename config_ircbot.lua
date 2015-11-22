@@ -3,12 +3,11 @@ irc.suffixes = { '_','__'}
 irc.channels = {"#57Ntest","#57N"}
 irc.server = "chat.freenode.net"
 irc.port = 6667
-irc.welcome_message = nil
+irc.join_message = nil
 irc.reconnect_time = 60 -- seconds
 
 irc.action_char = "~"
 
-irc.actions["ding"] = function(n) return "Trying to ring bell!" end
 irc.actions["uptime"] = function(n) return uptime() end
 irc.actions["wifistatus"] = function(n) return wifistatus(2) end
 irc.actions["heap"] = function(n) return node.heap() end
@@ -18,4 +17,4 @@ irc.responses["^[Dd]ing$"]=function(n) return "DONG!" end
 irc.responses["^[Hh][iI] "..irc.nick]=function(n) return "Hi "..n.."!" end
 
 irc.irc_timer = 3
-irc.server_messages = true
+irc.raw_server_messages = true
