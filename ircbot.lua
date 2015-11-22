@@ -60,21 +60,24 @@ function on_receive(c, text)
     local user,name,ip,chan,msg = text:match(":([%w_]+)!~([%w_]+)@(%S-)%sPRIVMSG%s(%S-)%s:(%C+)")
     if chan == current_nick then chan = user end -- return message goes back to user
     if msg~=nil then
-      print(prefix..user.."("..name..") in "..chan.." sent "..msg)
+      print(prefix..user.."("..name..") in "..chan.." sent '"..msg.."'")
       if msg:sub(1,1) == irc.action_char then
         local cmd = msg:sub(2)
         if cmd == 'help' then -- assumed not in actions so check first
+          print(prefix.."Identified a command: 'help'")
           send_msg_to_channel(chan, action_help)
         elseif irc.actions[cmd] == nil then
+          print(prefix.."Identified a command: '"..cmd.."' (not a command)")
           send_msg_to_channel(chan, "No such command! "..action_help)
         else
+          print(prefix.."Identified a command: '"..cmd.."'")
           send_msg_to_channel(chan,irc.actions[cmd](who_said_it))
         end
       end
       for k,v in pairs(irc.responses) do 
         if msg:match(k)~=nil then
+          print(prefix.."'"..msg.."' matches response pattern '"..k.."'")
           send_msg_to_channel(chan,v(user))
-          print(prefix..msg.." matches "..k)
         end 
       end
     end
@@ -99,6 +102,7 @@ function on_receive(c, text)
 end
 
 function send_msg_to_channel(chan, msg)
+  print(prefix.."Message '"..msg.."' sent to "..chan)
   irc_connection:send("PRIVMSG "..chan.." :"..msg.."\r\n")
 end
 
