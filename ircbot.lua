@@ -32,6 +32,7 @@ function on_disconnect(c)
 end
 
 function on_receive(c, text)
+  local user_match = ":([^%s]+)!~([^%s]+)@([^%s]+)%s" -- matches nick,name,location
   if irc.raw_server_messages then irc.log("--\n"..prefix.."Server sent:\n  "..text:sub(1,-2)) end
   if text:find("PING :") == 1 then
     c:send("PONG :" .. text:sub(7))
@@ -56,8 +57,8 @@ function on_receive(c, text)
       irc.log(prefix.."Disconnecting to try again in ~"..irc.reconnect_time.."s")
       c:close()
     end
-  elseif text:find("PRIVMSG ") then -- Channel message
-    local user,name,ip,chan,msg = text:match(":([%w_]+)!~([%w_]+)@(%S-)%sPRIVMSG%s(%S-)%s:(%C+)")
+  elseif text:find(" PRIVMSG ") then -- Channel message
+    local user,name,ip,chan,msg = text:match(user_match.."PRIVMSG%s(%S-)%s:(%C+)")
     if chan == current_nick then chan = user end -- return message goes back to user
     if msg~=nil then
       irc.log(prefix..user.."("..name..") in "..chan.." sent '"..msg.."'")
@@ -81,21 +82,21 @@ function on_receive(c, text)
         end 
       end
     end
-  elseif text:find("JOIN ") then
-    local user,name,ip,chan=text:match(":([%w_]+)!~([%w_]+)@(%S-)%sJOIN%s([%S]+)")
+  elseif text:find(" JOIN ") then
+    local user,name,ip,chan=text:match(user_match.."JOIN%s([%S]+)")
     irc.log(prefix..user.."("..name..") joined channel "..chan)
-  elseif text:find("QUIT") then
-    local user,name,ip,reason=text:match(":([%w_]+)!~([%w_]+)@(%S-)%sQUIT%s([%S]+)")
+  elseif text:find(" QUIT ") then
+    local user,name,ip,reason=text:match(user_match.."QUIT%s([%S]+)")
     irc.log(prefix..user.."("..name..") quit due to "..reason)
-  elseif text:find("PART") then
-    local user,name,ip,chan,reason=text:match(":([%w_]+)!~([%w_]+)@(%S-)%sPART%s([%S]+)%s([%S]+)")
+  elseif text:find(" PART ") then
+    local user,name,ip,chan,reason=text:match(user_match.."PART%s([%S]+)%s([%S]+)")
     irc.log(prefix..user.."("..name..") left "..chan.." due to "..reason)
-  elseif text:find("NICK") then
-    local user,name,ip,newuser = text:match(":([%w_]+)!~([%w_]+)@(%S-)%sNICK%s:([%S]+)")
+  elseif text:find(" NICK ") then
+    local user,name,ip,newuser = text:match(user_match.."NICK%s:([%S]+)")
     irc.log(prefix..name.." changed nick from '"..user.."' to '"..newuser.."'")
-  elseif text:find("KICK") then
+  elseif text:find(" KICK ") then
     irc.log("KICK")
-  elseif text:find("ERROR") then
+  elseif text:find(" ERROR ") then
     irc.log("ERROR")
   else
   end
