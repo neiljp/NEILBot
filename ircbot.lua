@@ -98,7 +98,13 @@ function on_receive(c, text)
     irc.log(prefix.."KICK")
   elseif text:find(" ERROR ") then
     irc.log(prefix.."ERROR")
+  elseif text:find(" NOTICE ") then
+    for line in string.gmatch(text,"(%C+)\r\n") do 
+      local server,msg = line:match(":(%C+)%sNOTICE%s(%C+)")
+      irc.log(prefix.."NOTICE: "..server.." says: '"..msg.."'")
+    end
   else
+   -- Unhandled server message
   end
 end
 
