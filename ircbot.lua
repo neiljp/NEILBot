@@ -95,9 +95,9 @@ function on_receive(c, text)
     local user,name,ip,newuser = text:match(user_match.."NICK%s:([%S]+)")
     irc.log(prefix..name.." changed nick from '"..user.."' to '"..newuser.."'")
   elseif text:find(" KICK ") then
-    irc.log("KICK")
+    irc.log(prefix.."KICK")
   elseif text:find(" ERROR ") then
-    irc.log("ERROR")
+    irc.log(prefix.."ERROR")
   else
   end
 end
