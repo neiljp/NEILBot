@@ -17,4 +17,6 @@ When compiled, the code should fit easily in the ESP8266 RAM/flash. It has been
 tested with an '01' module, but there shouldn't be a problem with others.
 
 If you find this useful, please let me know at my public github email address,
-github_neiljp@kepier.clara.net.
+github_neiljp@kepier.clara.net. I aim to keep it relatively lean and
+responsive, with customisation through the configuration. Contributions are
+welcome, including perhaps some sample configurations/customisations!
