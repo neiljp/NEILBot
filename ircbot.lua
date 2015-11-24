@@ -14,7 +14,7 @@ actions_=nil
 local connected=false
 local current_nick = irc.nick
 
-function on_connect(c)
+local function on_connect(c)
   connected=true
   irc.log(prefix.."Connected to: "..irc.server)
   c:send("NICK "..current_nick.."\r\n")
@@ -25,13 +25,13 @@ function on_connect(c)
   end
 end
 
-function on_disconnect(c)
+local function on_disconnect(c)
   connected=false
   irc.log(prefix.."Disconnected from: "..irc.server)
   irc_connection=nil
 end
 
-function on_receive(c, text)
+local function on_receive(c, text)
   local user_match = ":([^%s]+)!~([^%s]+)@([^%s]+)%s" -- matches nick,name,location
   if irc.raw_server_messages then irc.log("--\n"..prefix.."Server sent:\n  "..text:sub(1,-2)) end
   if text:find("PING :") == 1 then
@@ -113,7 +113,7 @@ function send_msg_to_channel(chan, msg)
   irc_connection:send("PRIVMSG "..chan.." :"..msg.."\r\n")
 end
 
-function connect_to_irc_if_have_wifi_and_not_connected()
+local function connect_to_irc_if_have_wifi_and_not_connected()
   if wifi.sta.status()~=5 then
     irc.log(prefix.."Waiting for wifi connection before connecting to server")
   elseif connected == false then 
