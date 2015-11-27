@@ -126,4 +126,4 @@ local function connect_to_irc_if_have_wifi_and_not_connected()
   end
 end
 connect_to_irc_if_have_wifi_and_not_connected()
-tmr.alarm(irc.irc_timer, irc.reconnect_time*1000, 1, connect_to_irc_if_have_wifi_and_not_connected)
+tmr.alarm(irc.tmr, irc.reconnect_time*1000, 1, connect_to_irc_if_have_wifi_and_not_connected)
