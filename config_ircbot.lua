@@ -15,7 +15,8 @@ irc = {
     uptime = function(n) return uptime() end ,
     wifi = function(n) return wifistatus(2) end ,
     heap = function(n) return node.heap() end ,
-    IDs = function(n) return "ChipID: "..node.chipid().." FlashID: "..node.flashid() end ,
+    df = function(n) local free,used,tot=file.fsinfo() return free.." (free) + "..used.." (used) = "..tot.." (total)" end ,
+    IDs = function(n) return "Chip: "..node.chipid().." Flash: "..node.flashid() end ,
     MAC = function(n) return wifi.sta.getmac() end ,
   } ,
   responses = {
