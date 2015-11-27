@@ -38,7 +38,7 @@ local function on_receive(c, text)
     c:send("PONG :" .. text:sub(7))
     irc.log(prefix.."Responded to server ping with pong")
   elseif text:find(":Nickname is already in use") then
-    irc.log(prefix.."Nickname in use")
+    irc.log(prefix.."Nickname '"..current_nick.."' is already in use")
     if #irc.suffixes > 0 then
       irc.log(prefix.."Trying an alternative nick suffix")
       if current_nick == irc.nick then current_nick = current_nick..irc.suffixes[1]
@@ -51,7 +51,7 @@ local function on_receive(c, text)
           end
         end
       end
-      irc.log("  new nick is: "..current_nick)
+      irc.log(prefix.."New nickname is: '"..current_nick.."'")
       on_connect(c)
     else
       irc.log(prefix.."Disconnecting to try again in ~"..irc.reconnect_time.."s")
