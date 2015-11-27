@@ -1,6 +1,6 @@
 local prefix="IRC: "
 
-irc={}; irc.actions={}; irc.responses={}
+irc={}
 local irc_cfg=loadfile("config_ircbot.lc")
 if irc_cfg == nil then irc_cfg=assert(loadfile("config_ircbot.lua")) end
 irc_cfg() -- Handle this more gracefully, ideally
