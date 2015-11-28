@@ -25,5 +25,5 @@ irc = {
   } ,
 
   raw_server_messages = false , -- Show messages sent from server? (aids debugging)
-  log = print ,-- Function to use to log messages (use print or define your own)
+  log = function(s) print("IRC: "..uptime().." "..s) end , -- How to log messages
 }
