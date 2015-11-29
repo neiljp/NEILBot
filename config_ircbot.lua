@@ -18,6 +18,7 @@ irc = {
     df = function(n) local free,used,tot=file.fsinfo() return free.." (free) + "..used.." (used) = "..tot.." (total)" end ,
     IDs = function(n) return "Chip: "..node.chipid().." Flash: "..node.flashid() end ,
     MAC = function(n) return wifi.sta.getmac() end ,
+    src = function(n) return "https://github.com/neiljp/nodemcu_lua_ircbot" end ,
   } ,
   responses = {
     ["^[Pp]ing$"] = function(n) return "Ack!" end ,
