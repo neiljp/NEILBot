@@ -69,7 +69,7 @@ local function on_receive(c, text)
           send_msg_to_channel(chan, "No such command! "..action_help)
         else
           irc.log("Identified a command: '"..cmd.."'")
-          send_msg_to_channel(chan,irc.actions[cmd](who_said_it))
+          send_msg_to_channel(chan,irc.actions[cmd](user))
         end
       end
       for k,v in pairs(irc.responses) do 
