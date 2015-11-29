@@ -1,12 +1,12 @@
 local irc_cfg=loadfile("config_ircbot.lc")
 if irc_cfg == nil then irc_cfg=assert(loadfile("config_ircbot.lua")) end
 irc_cfg() -- Handle this more gracefully, ideally
-irc_cfg=nil
+irc_cfg=nil collectgarbage()
 
 local actions_={} -- Construct list of bot commands/actions
 for k,v in pairs(irc.actions) do table.insert(actions_,k) end
 local action_help="Commands: help "..table.concat(actions_," ")
-actions_=nil
+actions_=nil collectgarbage()
 
 local connected=false
 local current_nick = irc.nick
