@@ -30,7 +30,7 @@ end
 
 local function on_receive(c, text)
   local user_match = ":([^%s]+)!~([^%s]+)@([^%s]+)%s" -- matches nick,name,location
-  if irc.raw_server_messages then irc.log("Server sent:\n  "..text:sub(1,-2)) end
+  if irc.raw_server_messages then irc.log("Server sent:\n["..text.."]") end
   for line in string.gmatch(text,"(.-\r\n)") do 
     if line:find("PING :") == 1 then
       c:send("PONG :" .. line:sub(7))
