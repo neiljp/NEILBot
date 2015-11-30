@@ -42,7 +42,7 @@ local function on_receive(c, text)
       else
         for i,v in pairs(irc.suffixes) do
           if current_nick == irc.nick..v then 
-            if i ~= #irc.suffixes then current_nick = irc.nick..irc.suffixes[i+1]
+            if i < #irc.suffixes then current_nick = irc.nick..irc.suffixes[i+1]
             else current_nick = irc.nick
             end
           end
