@@ -16,9 +16,9 @@ irc = {
     wifi = function(n) return wifistatus(2) end ,
     heap = function(n) return node.heap() end ,
     df = function(n) local free,used,tot=file.fsinfo() return free.." (free) + "..used.." (used) = "..tot.." (total)" end ,
-    IDs = function(n) return "Chip: "..node.chipid().." Flash: "..node.flashid() end ,
+    IDs = "Chip: "..node.chipid().." Flash: "..node.flashid() ,
     MAC = function(n) return wifi.sta.getmac() end ,
-    src = function(n) return "https://github.com/neiljp/nodemcu_lua_ircbot" end ,
+    src = "https://github.com/neiljp/nodemcu_lua_ircbot" ,
   } ,
   responses = {
     ["^[Pp]ing$"] = function(n) return "Ack!" end ,
