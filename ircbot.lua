@@ -18,7 +18,7 @@ local function on_connect(c)
   c:send("USER "..current_nick .." 8 * :"..current_nick.."\r\n")
   for i,ch in ipairs(irc.channels) do 
     c:send("JOIN "..ch.."\r\n")
-    if irc.join_message then send_msg_to_channel(c,irc.welcome_message) end
+    if irc.join_message then send_msg_to_channel(c,irc.welcome_message,false) end
   end
 end
 
@@ -63,20 +63,20 @@ local function on_receive(c, text)
           local cmd = msg:sub(2)
           if cmd == 'help' then -- assumed not in actions so check first
             irc.log("Identified a command: 'help'")
-            send_msg_to_channel(chan, action_help)
+            send_msg_to_channel(chan, action_help, irc.actions_usenotice)
           elseif irc.actions[cmd] == nil then
             irc.log("Identified a command: '"..cmd.."' (not a command)")
-            send_msg_to_channel(chan, "No such command! "..action_help)
+            send_msg_to_channel(chan, "No such command! "..action_help, irc.actions_usenotice)
           else
             irc.log("Identified a command: '"..cmd.."'")
-            if type(irc.actions[cmd])=="string" then send_msg_to_channel(chan,irc.actions[cmd])
-            else send_msg_to_channel(chan,irc.actions[cmd](user)) end
+            if type(irc.actions[cmd])=="string" then send_msg_to_channel(chan,irc.actions[cmd], irc.actions_usenotice)
+            else send_msg_to_channel(chan,irc.actions[cmd](user), irc.actions_usenotice) end
           end
         end
         for k,v in pairs(irc.responses) do 
           if msg:match(k)~=nil then
             irc.log("'"..msg.."' matches response pattern '"..k.."'")
-            send_msg_to_channel(chan,v(user))
+            send_msg_to_channel(chan,v(user), false)
           end 
         end
       end
@@ -105,9 +105,10 @@ local function on_receive(c, text)
   end -- end of loop through lines
 end
 
-function send_msg_to_channel(chan, msg)
+function send_msg_to_channel(chan, msg, use_notice)
   irc.log("Message '"..msg.."' sent to "..chan)
-  irc_connection:send("PRIVMSG "..chan.." :"..msg.."\r\n")
+  if use_notice then irc_connection:send("NOTICE "..chan.." :"..msg.."\r\n")
+  else irc_connection:send("PRIVMSG "..chan.." :"..msg.."\r\n") end
 end
 
 local function connect_to_irc_if_have_wifi_and_not_connected()

@@ -11,6 +11,7 @@ irc = {
   alarm_tmr = 3 , -- alarm timer to use internally (to reconnect to server)
 
   actions_char = "~" ,
+  actions_usenotice = true , -- use NOTICE? (or else PRIVMSG = regular messages)
   actions = { -- command_name = string | function
     uptime = function(n) return uptime() end ,
     wifi = function(n) return wifistatus(2) end ,
