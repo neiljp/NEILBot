@@ -31,79 +31,79 @@ end
 local function on_receive(c, text)
   local user_match = ":([^%s]+)!~([^%s]+)@([^%s]+)%s" -- matches nick,name,location
   if irc.raw_server_messages then irc.log("Server sent:\n  "..text:sub(1,-2)) end
-  if text:find("PING :") == 1 then
-    c:send("PONG :" .. text:sub(7))
-    irc.log("Responded to server ping with pong")
-  elseif text:find(":Nickname is already in use") then
-    irc.log("Nickname '"..current_nick.."' is already in use")
-    if #irc.suffixes > 0 then
-      irc.log("Trying an alternative nick suffix")
-      if current_nick == irc.nick then current_nick = current_nick..irc.suffixes[1]
-      else
-        for i,v in pairs(irc.suffixes) do
-          if current_nick == irc.nick..v then 
-            if i < #irc.suffixes then current_nick = irc.nick..irc.suffixes[i+1]
-            else current_nick = irc.nick
+  for line in string.gmatch(text,"(%C+)\r\n") do 
+    if line:find("PING :") == 1 then
+      c:send("PONG :" .. line:sub(7))
+      irc.log("Responded to server ping with pong")
+    elseif line:find(":Nickname is already in use") then
+      irc.log("Nickname '"..current_nick.."' is already in use")
+      if #irc.suffixes > 0 then
+        irc.log("Trying an alternative nick suffix")
+        if current_nick == irc.nick then current_nick = current_nick..irc.suffixes[1]
+        else
+          for i,v in pairs(irc.suffixes) do
+            if current_nick == irc.nick..v then 
+              if i < #irc.suffixes then current_nick = irc.nick..irc.suffixes[i+1]
+              else current_nick = irc.nick
+              end
             end
           end
         end
+        irc.log("New nickname is: '"..current_nick.."'")
+        on_connect(c)
+      else
+        irc.log("Disconnecting to try again in ~"..irc.reconnect_time.."s")
+        c:close()
       end
-      irc.log("New nickname is: '"..current_nick.."'")
-      on_connect(c)
-    else
-      irc.log("Disconnecting to try again in ~"..irc.reconnect_time.."s")
-      c:close()
-    end
-  elseif text:find(" PRIVMSG ") then -- Channel message
-    local user,name,ip,chan,msg = text:match(user_match.."PRIVMSG%s(%S-)%s:(%C+)")
-    if chan == current_nick then chan = user end -- return message goes back to user
-    if msg~=nil then
-      irc.log(user.."("..name..") in "..chan.." sent '"..msg.."'")
-      if msg:sub(1,1) == irc.action_char then
-        local cmd = msg:sub(2)
-        if cmd == 'help' then -- assumed not in actions so check first
-          irc.log("Identified a command: 'help'")
-          send_msg_to_channel(chan, action_help)
-        elseif irc.actions[cmd] == nil then
-          irc.log("Identified a command: '"..cmd.."' (not a command)")
-          send_msg_to_channel(chan, "No such command! "..action_help)
-        else
-          irc.log("Identified a command: '"..cmd.."'")
-          if type(irc.actions[cmd])=="string" then send_msg_to_channel(chan,irc.actions[cmd])
-          else send_msg_to_channel(chan,irc.actions[cmd](user)) end
+    elseif line:find(" PRIVMSG ") then -- Channel message
+      local user,name,ip,chan,msg = line:match(user_match.."PRIVMSG%s(%S-)%s:(%C+)")
+      if chan == current_nick then chan = user end -- return message goes back to user
+      if msg~=nil then
+        irc.log(user.."("..name..") in "..chan.." sent '"..msg.."'")
+        if msg:sub(1,1) == irc.action_char then
+          local cmd = msg:sub(2)
+          if cmd == 'help' then -- assumed not in actions so check first
+            irc.log("Identified a command: 'help'")
+            send_msg_to_channel(chan, action_help)
+          elseif irc.actions[cmd] == nil then
+            irc.log("Identified a command: '"..cmd.."' (not a command)")
+            send_msg_to_channel(chan, "No such command! "..action_help)
+          else
+            irc.log("Identified a command: '"..cmd.."'")
+            if type(irc.actions[cmd])=="string" then send_msg_to_channel(chan,irc.actions[cmd])
+            else send_msg_to_channel(chan,irc.actions[cmd](user)) end
+          end
+        end
+        for k,v in pairs(irc.responses) do 
+          if msg:match(k)~=nil then
+            irc.log("'"..msg.."' matches response pattern '"..k.."'")
+            send_msg_to_channel(chan,v(user))
+          end 
         end
       end
-      for k,v in pairs(irc.responses) do 
-        if msg:match(k)~=nil then
-          irc.log("'"..msg.."' matches response pattern '"..k.."'")
-          send_msg_to_channel(chan,v(user))
-        end 
-      end
-    end
-  elseif text:find(" JOIN ") then
-    local user,name,ip,chan=text:match(user_match.."JOIN%s([%S]+)")
-    irc.log(user.."("..name..") joined channel "..chan)
-  elseif text:find(" QUIT ") then
-    local user,name,ip,reason=text:match(user_match.."QUIT%s([%S]+)")
-    irc.log(user.."("..name..") quit due to "..reason)
-  elseif text:find(" PART ") then
-    local user,name,ip,chan,reason=text:match(user_match.."PART%s([%S]+)%s([%S]+)")
-    irc.log(user.."("..name..") left "..chan.." due to "..reason)
-  elseif text:find(" NICK ") then
-    local user,name,ip,newuser = text:match(user_match.."NICK%s:([%S]+)")
-    irc.log(name.." changed nick from '"..user.."' to '"..newuser.."'")
-  elseif text:find(" KICK ") then
-    irc.log("KICK")
-  elseif text:find(" ERROR ") then
-    irc.log("ERROR")
-  elseif text:find(" NOTICE ") then
-    for line in string.gmatch(text,"(%C+)\r\n") do 
+    elseif line:find(" JOIN ") then
+      local user,name,ip,chan=line:match(user_match.."JOIN%s([%S]+)")
+      irc.log(user.."("..name..") joined channel "..chan)
+    elseif line:find(" QUIT ") then
+      local user,name,ip,reason=line:match(user_match.."QUIT%s([%S]+)")
+      irc.log(user.."("..name..") quit due to "..reason)
+    elseif line:find(" PART ") then
+      local user,name,ip,chan,reason=line:match(user_match.."PART%s([%S]+)%s([%S]+)")
+      irc.log(user.."("..name..") left "..chan.." due to "..reason)
+    elseif line:find(" NICK ") then
+      local user,name,ip,newuser = line:match(user_match.."NICK%s:([%S]+)")
+      irc.log(name.." changed nick from '"..user.."' to '"..newuser.."'")
+    elseif line:find(" KICK ") then
+      irc.log("KICK")
+    elseif line:find(" ERROR ") then
+      irc.log("ERROR")
+    elseif line:find(" NOTICE ") then
       local server,msg = line:match(":(%C+)%sNOTICE%s(%C+)")
       irc.log("NOTICE: "..server.." says: '"..msg.."'")
+    else
+     -- Unhandled server message
     end
-  else
-   -- Unhandled server message
-  end
+  end -- end of loop through lines
 end
 
 function send_msg_to_channel(chan, msg)
