@@ -10,8 +10,8 @@ irc = {
   reconnect_time = 60 , -- seconds before trying to reconnect to server
   alarm_tmr = 3 , -- alarm timer to use internally (to reconnect to server)
 
-  action_char = "~" ,
-  actions = { 
+  actions_char = "~" ,
+  actions = { -- command_name = string | function
     uptime = function(n) return uptime() end ,
     wifi = function(n) return wifistatus(2) end ,
     heap = function(n) return node.heap() end ,
