@@ -31,7 +31,7 @@ end
 local function on_receive(c, text)
   local user_match = ":([^%s]+)!~([^%s]+)@([^%s]+)%s" -- matches nick,name,location
   if irc.raw_server_messages then irc.log("Server sent:\n["..text.."]") end
-  for line in string.gmatch(text,"(.-\r\n)") do 
+  for line in string.gmatch(text,"(.-\r\n)") do -- text may be multiline, so use loop
     if line:find("PING :") == 1 then
       c:send("PONG :" .. line:sub(7))
       irc.log("Responded to server ping with pong")
@@ -44,8 +44,7 @@ local function on_receive(c, text)
           for i,v in pairs(irc.suffixes) do
             if current_nick == irc.nick..v then 
               if i < #irc.suffixes then current_nick = irc.nick..irc.suffixes[i+1]
-              else current_nick = irc.nick
-              end
+              else current_nick = irc.nick end
             end
           end
         end
