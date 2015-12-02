@@ -55,8 +55,10 @@ local function on_receive(c, text)
         c:close()
       end
     elseif line:find(" PRIVMSG ") then -- Channel message
-      local user,name,ip,chan,msg = line:match(user_match.."PRIVMSG%s(%S-)%s:(%C+)")
+      local user,name,ip,chan,msg = line:match(user_match.."PRIVMSG%s(%S-)%s:(.+)\r\n")
       if chan == current_nick then chan = user end -- return message goes back to user
+      -- This could just always do a gsub, but allows extra code if found, as is
+      if msg:find(string.char(1)) then msg=msg:gsub(string.char(1),"") end
       if msg~=nil then
         irc.log(chan.." : "..user.."("..name..") : '"..msg.."'")
         if msg:sub(1,1) == irc.actions_char then
