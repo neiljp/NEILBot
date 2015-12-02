@@ -58,7 +58,7 @@ local function on_receive(c, text)
       local user,name,ip,chan,msg = line:match(user_match.."PRIVMSG%s(%S-)%s:(%C+)")
       if chan == current_nick then chan = user end -- return message goes back to user
       if msg~=nil then
-        irc.log(user.."("..name..") in "..chan.." sent '"..msg.."'")
+        irc.log(chan.." : "..user.."("..name..") : '"..msg.."'")
         if msg:sub(1,1) == irc.actions_char then
           local cmd = msg:sub(2)
           if cmd == 'help' then -- assumed not in actions so check first
