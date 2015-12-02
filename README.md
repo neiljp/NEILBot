@@ -1,4 +1,4 @@
-# NELIBot (Neil's ESP8266 Lua IRC Bot)
+# NEILBot (Neil's ESP8266 IRC Lua Bot)
 
 An IRC bot for NodeMCU, the Lua firmware for ESP8266.
 
@@ -37,7 +37,7 @@ and which *server* (and *port*) to connect to, the configuration allows:
 
 ## History
 
-What is now NELIBot was originally developed to allow easy online interaction
+What is now NEILBot was originally developed to allow easy online interaction
 with a ESP8266-based project during a weekend hackathon at [57North
 Hacklab](https://57north.org.uk). Other Lua ESP8266 IRC-bot code
 existed/exists, but appeared customised, limited, or primarily proof of
@@ -48,3 +48,10 @@ The code remains under fairly heavy development as of Dec 2015, and the
 configuration file format is subject to change, though variations between
 versions should be fairly easy to track. Let me know if you start actively
 using it, and I might not alter things quite so rapidly ;)
+
+## Name
+
+The project originally had a rather generic name, before moving to one based on
+a simpler short acronym, then finally taking a little artistic licence to
+switch the order of two words and arrive at a recursive-style name. Which words
+were rearranged is left as an exercise for the reader ;)
