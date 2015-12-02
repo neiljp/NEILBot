@@ -29,7 +29,7 @@ local function on_disconnect(c)
 end
 
 local function on_receive(c, text)
-  local user_match = ":([^%s]+)!~([^%s]+)@([^%s]+)%s" -- matches nick,name,location
+  local user_match = ":([^%s]+)!~?([^%s]+)@([^%s]+)%s" -- matches nick,name,location
   if irc.raw_server_messages then irc.log("Server sent:\n["..text.."]") end
   for line in string.gmatch(text,"(.-\r\n)") do -- text may be multiline, so use loop
     if line:find("PING :") == 1 then
